@@ -1,0 +1,56 @@
+digraph state_machine {
+
+    node [shape = doublecircle, color = red]; start done critical_error; // двойной круг
+    node [shape = circle, color = gray, style = filled]; Disk Photo Proccessing GenMenu Uploader;
+    node [shape = circle, color = black, style = no]; download getting source downloading wbfilter genpdf genering add_to_db read_menu_db create_menu_db load_photos load_pdf load_menu regeneration;
+
+    start -> download [label = "загрузить конспект"];
+
+    download -> Disk [label = "через яндекс диск"];
+    download -> Photo [label = "через фото вк"];
+
+    Disk -> source [label = "передать ссылку"]
+    source -> source [label = "ошибка: плохая ссылка"]
+    source -> downloading [label = "хорошая ссылка"]
+    downloading -> Disk [label = "загрузка завершена"]
+    Disk -> Proccessing [label = "файлы в папке"]
+
+
+    Photo -> getting [label = "загрузка фото"]
+    getting -> getting [label = "еще"]
+    getting -> Photo [label = "все"]
+    Photo -> Proccessing [label = "файлы в папке"]
+
+
+    Proccessing -> wbfilter [label= "в чб"]
+    wbfilter -> genpdf [label= "генерация пдф"]
+    genpdf -> critical_error [label= "ошибка: пдф не может быть сгенерировано"]
+    genpdf -> Proccessing [label= "успешно"]
+    Proccessing -> GenMenu [label = "файлы обработаны"]
+
+
+    GenMenu -> read_menu_db [label = "меню есть"]
+    GenMenu -> create_menu_db [label = "меню нет"]
+    create_menu_db -> GenMenu [label = "создано"]
+    create_menu_db -> critical_error [label = "ошибка: невозможно создать\прочитать таблицу"]
+    read_menu_db -> add_to_db [label = "добавить"]
+    add_to_db -> critical_error [label = "ошибка: невозможно добавить"]
+    add_to_db -> genering [label = "добавлено"]
+    genering -> GenMenu [label = "сгенерировано"]
+    genering -> critical_error [label = "ошибка: меню не может быть сгенерировано"]
+    GenMenu -> Uploader [label = "меню готово"]
+
+
+    Uploader -> load_photos [label = "грузим фото в альбомы"]
+    load_photos -> load_pdf [label = "загружено в альбомы"]
+    load_pdf -> load_menu [label = "загружено в документы"]
+    load_menu -> Uploader [label = "меню загружено"]
+    load_photos -> critical_error [label = "ошибка: не может быть загружено в альбомы"]
+    load_pdf -> critical_error [label = "ошибка: не может быть загружено в документы"]
+    load_menu -> critical_error [label = "ошибка: меню не может быть загружено"]
+    Uploader -> done [label = "выгружено в группу"]
+
+    critical_error -> regeneration [label = "есть файлы неучтенные системой"]
+    regeneration -> done [label = "система восстановлена успешно"]
+    regeneration -> done [label = "ошибка: система невосстановлена"]
+}
