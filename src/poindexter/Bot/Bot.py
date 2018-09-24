@@ -15,6 +15,8 @@ class IBot:
         self._uploaders = []
         self._error_handler = []
 
+        self._order = []
+
     def get(self, typename):
         if issubclass(typename, IDownloader):
             return self._downloaders
@@ -29,7 +31,8 @@ class IBot:
 
     def append(self, obj):
         self.get(type(obj)).append(obj)
+        self._order.append(obj)
 
-    @abstractmethod
-    def run(self):
-        """запуск бота"""
+    def run(self, source, destination):
+        for processor in self._order:
+            processor.process(source, destination)
