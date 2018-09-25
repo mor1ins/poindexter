@@ -6,7 +6,7 @@ from Abstructions.Uploader import IUploader
 
 
 class IBot:
-    __metaclass__ = ABCMeta
+    # __metaclass__ = ABCMeta
 
     def __init__(self):
         self._downloaders = []
