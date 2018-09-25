@@ -1,6 +1,6 @@
 cd poindexter
 python3 Main.py &
-cd ..
+
 
 while true
 do
