@@ -12,9 +12,9 @@ do
                 kill $PID
                 echo "Kill $PID"
                 git pull
-                sleep 5
+                sleep 10
                 echo "Run"
                 python3 Main.py &
         fi
-        sleep 10
+        sleep 60
 done
