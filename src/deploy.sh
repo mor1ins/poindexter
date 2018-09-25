@@ -4,7 +4,7 @@ cd ..
 
 while true
 do
-        echo "hello"
+        echo "running..."
         git remote update
         if git status | grep "is behind"
         then
@@ -12,7 +12,8 @@ do
                 kill $PID
                 echo "Kill $PID"
                 git pull
-                PID=$(python3 Main.py &)
+                echo "Run"
+                python3 Main.py &
         fi
         sleep 10
 done
