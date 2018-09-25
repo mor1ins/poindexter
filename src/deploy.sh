@@ -8,9 +8,9 @@ do
         git remote update
         if git status | grep "is behind"
         then
-                PID=$(ps ux | grep -m1 "Main.py" | cut -d" " -f4)
-                kill $PID
-                echo "Kill $PID"
+                PID=$(ps ux | grep -m1 "Main.py" | cut -d" " -f9)
+                kill -9 $PID
+                echo "kill -9 $PID"
                 git pull
                 sleep 10
                 echo "Run"
