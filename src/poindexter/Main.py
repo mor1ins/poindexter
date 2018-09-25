@@ -53,7 +53,7 @@ class VKBot:
 
 
 def start(message, vk):
-    vk.messages.send(user_id=message.user_id, message=u"Повеливай, хозяин")
+    vk.messages.send(user_id=message.user_id, message=u"Повеливайте")
 
 
 def random_habrahabr(message, vk):

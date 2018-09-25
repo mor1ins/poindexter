@@ -1,7 +1,6 @@
 cd poindexter
 python3 Main.py &
 
-
 while true
 do
         echo "running..."
