@@ -12,6 +12,7 @@ do
                 kill $PID
                 echo "Kill $PID"
                 git pull
+                sleep 5
                 echo "Run"
                 python3 Main.py &
         fi
