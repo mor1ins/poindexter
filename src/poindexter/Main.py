@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import vk_api
 from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
@@ -50,7 +53,7 @@ class VKBot:
 
 
 def start(message, vk):
-    vk.messages.send(user_id=message.user_id, message=u"Начнем, пожалуй")
+    vk.messages.send(user_id=message.user_id, message=u"    Начнем, пожалуй")
 
 
 def random_habrahabr(message, vk):
