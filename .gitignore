@@ -104,3 +104,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# deploy log
+log
+
+# credentials
+credentials*
