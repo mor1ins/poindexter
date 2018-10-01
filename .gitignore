@@ -109,4 +109,4 @@ venv.bak/
 log
 
 # credentials
-src/poindexter/credentials.py
+./src/poindexter/credentials.py
