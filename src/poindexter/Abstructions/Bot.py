@@ -8,7 +8,7 @@ from Abstructions.Processor import IProcessor
 from Abstructions.Uploader import IUploader
 
 
-class IBot:
+class IExecutor:
     # __metaclass__ = ABCMeta
 
     def __init__(self):
