@@ -80,5 +80,5 @@ class OutlineDatabase:
         self.execute(query, additionals)
 
 
-if __name__="__main__":
+if __name__ == "__main__":
     pass

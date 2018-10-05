@@ -42,3 +42,5 @@ class VKBot:
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 self.event = event
                 self.bot_commands(event, self.vk)
+
+
