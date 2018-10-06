@@ -12,25 +12,7 @@ class IExecutor:
     # __metaclass__ = ABCMeta
 
     def __init__(self):
-        self._downloaders = []
-        self._processors = []
-        self._generators = []
-        self._uploaders = []
-        self._error_handler = []
-
         self._order = []
-
-    def get(self, typename):
-        if issubclass(typename, IDownloader):
-            return self._downloaders
-        elif issubclass(typename, IGenerator):
-            return self._generators
-        elif issubclass(typename, IProcessor):
-            return self._processors
-        elif issubclass(typename, IUploader):
-            return self._uploaders
-        else:
-            return self._error_handler
 
     def append(self, obj):
         self.get(type(obj)).append(obj)

@@ -9,7 +9,7 @@ class BotCommand:
     def __init__(self, names, handler):
         self.__names = set()
         for name in names:
-            self.__names.add(name)
+            self.__names.add(name.lower())
         self.__handler = handler
 
     def __call__(self, *args, **kwargs):
@@ -18,7 +18,7 @@ class BotCommand:
 
     def __eq__(self, other):
         if type(other) == vk_api.longpoll.Event:
-            return self.__names.__contains__(other.text)
+            return self.__names.__contains__(other.text.lower())
         elif type(other) == BotCommand:
             return self.__names.intersection(other.__names).__len__() > 0
         return False
@@ -43,5 +43,7 @@ class BotCommandSet:
 
     def __call__(self, event, *args, **kwargs):
         cmd = self.__find__(event)
-        return cmd(event, *args, **kwargs)
-
+        if cmd is not None:
+            return cmd(event, *args, **kwargs)
+        else:
+            return None
