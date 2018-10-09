@@ -27,7 +27,7 @@ class BotCommand:
         return hash(self.__names.__hash__)
 
 
-class BotCommandSet:
+class BotCommandSet(object):
     def __init__(self):
         self.__queryset = set()
 
@@ -41,7 +41,10 @@ class BotCommandSet:
         cmd = BotCommand(command, handler)
         self.__queryset.add(cmd)
 
-    def __call__(self, event, *args, **kwargs):
+    def __call__(self):
+        return self
+
+    def exec_handler(self, event, *args, **kwargs):
         cmd = self.__find__(event)
         if cmd is not None:
             return cmd(event, *args, **kwargs)

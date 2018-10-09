@@ -1,46 +1,37 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import vk_api
-from vk_api import VkUpload
-from vk_api.longpoll import VkLongPoll, VkEventType
-import requests
+from vk_api.longpoll import VkEventType
 from credentials import vk_token
+from APIs.VkApi import VkApi
 from CommandSet import BotCommandSet
 
 
-class VKBot:
-    vk = 0
-    vk_session = 0
-    session = 0
-    upload = 0
-    long_poll = 0
-    event = 0
-    bot_commands = BotCommandSet()
+class VKBot(object):
+    def __init__(self):
+        self.commands = BotCommandSet()
+        self.vk = VkApi(vk_token)
 
-    def vk_auth(self, log=None, passwd=None, auth_token=None):
-        if vk_token:
-            self.vk_session = vk_api.VkApi(token=auth_token)
-        else:
-            self.vk_session = vk_api.VkApi(log, passwd)
-            try:
-                self.vk_session.auth()
-            except vk_api.AuthError as error_msg:
-                print(error_msg)
-                return
-        self.vk = self.vk_session.get_api()
-        self.session = requests.session()
-        self.upload = VkUpload(self.vk_session)
-        self.long_poll = VkLongPoll(self.vk_session)
+    def __call__(self, *args, **kwargs):
+        return self
 
-    def __init__(self, log=None, passwd=None, token=None, commands=None):
-        self.vk_auth(log, passwd, token)
-        self.bot_commands = commands
+    @property
+    def api(self):
+        return self.vk.vk
+
+    def auth(self):
+        self.vk.vk_auth()
+
+    def message_handler(self, commands):
+        def decorator(f):
+            self.commands.add(commands, f)
+            return f
+        return decorator
 
     def run(self):
-        for event in self.long_poll.listen():
+        for event in self.vk.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                self.event = event
-                self.bot_commands(event, self.vk)
-
+                print("start execute", event.text)
+                self.commands.exec_handler(event)
+                print("stop execute", event.text)
 
