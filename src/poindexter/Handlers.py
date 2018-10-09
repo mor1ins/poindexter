@@ -15,33 +15,6 @@ from fpdf import FPDF
 inject.configure(dependency.bot_config)
 bot = inject.instance(VKBot)
 
-#
-# class HandlerOwner(IExecutor):
-#     def __init__(self, message=None):
-#         self.__message = message
-#         super().__init__()
-#         # self.append()
-#
-#     @property
-#     def message(self):
-#         return self.__message
-#
-#     @message.setter
-#     def set_message(self, message):
-#         self.__message = message
-#
-#     @staticmethod
-#
-#         self.run(dest_for_archive, dest_directory % title)
-#
-#     @staticmethod
-#     def execute_handler(self, message, vk):
-#         self.run()
-#
-#     @message.setter
-#     def message(self, value):
-#         self._message = value
-
 
 @bot.message_handler([u"Погнали", u"погнали", u"лол", u"Лол"])
 def start_handler(message):
@@ -88,10 +61,3 @@ def vk_ready_download_handler(message):
     doc = bot.api.docs.save(file=resp, title='конспект')[0]
 
     bot.api.messages.send(peer_id=message.user_id, attachment='doc%s_%s' % (doc['owner_id'], doc['id']))
-
-
-#
-# handlers = HandlerOwner()
-# bot_commands = BotCommandSet()
-# bot_commands.add([u"Загрузить с вк"], handlers.vk_start_download_handler)
-# bot_commands.add([u"Ок", u'ОК', u"ок"], handlers.vk_ready_download_handler)

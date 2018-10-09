@@ -1,4 +1,3 @@
-import inject
 from Bot.VkBot import VKBot
 
 
