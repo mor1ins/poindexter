@@ -1,3 +1,4 @@
+sqlalchemy
 inject
 PIL
 fpdf
