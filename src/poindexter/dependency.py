@@ -3,6 +3,8 @@ from APIs.VkApi import VkApi
 from credentials import vk_token
 from CommandSet import BotCommandSet
 
+
+work_dir = '../../out/%s'
 view_api = VkApi(vk_token)
 handlers = BotCommandSet()
 
