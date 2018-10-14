@@ -30,6 +30,7 @@ select_query = 'select %s from %s'
 
 format_dir = r'(\w+)\s+(\d)(\d)\s+(\w+),\s+(\w+\s*\w*),\s+(\w+)\s+(\w+),\s+(\d+)'
 
+
 # trans_set_query = 'SET TRANSACTION %s'
 # trans_autocommit_query = 'SET autocommit=&d'
 
@@ -38,7 +39,8 @@ class Checker:
         self.template = template
 
     def check_title(self, title):
-        re.match(self.template, title)
+        return len(re.match(self.template, title).groups()) > 0
+
 
 class NotesDB:
     def __init__(self, db_path, table):
