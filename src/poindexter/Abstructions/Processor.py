@@ -10,12 +10,3 @@ class IProcessor:
     @abstractmethod
     def process(self, source, destination):
         """обработка"""
-
-    @abstractmethod
-    def commit(self):
-        """подтверждение изменений"""
-
-    @abstractmethod
-    def rollback(self):
-        """откат изменений"""
-

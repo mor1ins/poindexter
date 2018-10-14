@@ -5,6 +5,7 @@ import vk_api
 import requests
 from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll
+from Abstructions.Uploader import IUploader
 
 
 class VkApi:

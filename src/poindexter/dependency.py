@@ -1,6 +1,10 @@
-from Bot.VkBot import VKBot
+from APIs.DBApi import NotesDB, DB_NOTES_PATH, TABLE_NAME
+from APIs.VkApi import VkApi
+from credentials import vk_token
+from CommandSet import BotCommandSet
+
+view_api = VkApi(vk_token)
+handlers = BotCommandSet()
 
 
-def bot_config(binder):
-    binder.bind_to_constructor(VKBot, VKBot())
-
+global_db = NotesDB(DB_NOTES_PATH, TABLE_NAME)

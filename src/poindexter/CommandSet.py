@@ -44,6 +44,12 @@ class BotCommandSet(object):
     def __call__(self):
         return self
 
+    def message_handler(self, commands):
+        def decorator(f):
+            self.add(commands, f)
+            return f
+        return decorator
+
     def exec_handler(self, event, *args, **kwargs):
         cmd = self.__find__(event)
         if cmd is not None:

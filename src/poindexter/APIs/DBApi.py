@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+
+
 import os
 import re
 from Note import Note
@@ -37,6 +39,9 @@ class NotesDB:
         self.table = table
         self.db_path = db_path
         self.engine = create_engine(CONNECTING_STRING % self.db_path)
+
+    def __call__(self, *args, **kwargs):
+        return self
 
     def create_table(self):
         self.engine.execute(create_table_query % self.table)

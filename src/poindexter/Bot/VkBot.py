@@ -2,36 +2,26 @@
 # -*- coding: utf-8 -*-
 
 from vk_api.longpoll import VkEventType
-from credentials import vk_token
-from APIs.VkApi import VkApi
-from CommandSet import BotCommandSet
+import dependency
+import Handlers
 
 
 class VKBot(object):
     def __init__(self):
-        self.commands = BotCommandSet()
-        self.vk = VkApi(vk_token)
-
-    def __call__(self, *args, **kwargs):
-        return self
+        self.__commands = Handlers.get_handlers()
+        self.__api = dependency.view_api
 
     @property
     def api(self):
-        return self.vk.vk
+        return self.__api.vk
 
     def auth(self):
-        self.vk.vk_auth()
-
-    def message_handler(self, commands):
-        def decorator(f):
-            self.commands.add(commands, f)
-            return f
-        return decorator
+        self.__api.vk_auth()
 
     def run(self):
-        for event in self.vk.long_poll.listen():
+        for event in self.__api.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 print("start execute", event.text)
-                self.commands.exec_handler(event)
+                self.__commands.exec_handler(event)
                 print("stop execute", event.text)
 

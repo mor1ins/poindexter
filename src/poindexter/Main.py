@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Handlers import *
+from Bot.VkBot import VKBot
 
-bot = inject.instance(VKBot)
+
+bot = VKBot()
 bot.auth()
 bot.run()

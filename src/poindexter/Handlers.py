@@ -1,36 +1,31 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import dependency
-import inject
 from os import listdir
 from PIL import Image
 from os.path import isfile, join
 from zipfile import ZipFile
-from Bot.VkBot import VKBot
 from urllib import request
-import requests
+from Loaders.VkLoader import VkUploader
 from fpdf import FPDF
-
-inject.configure(dependency.bot_config)
-bot = inject.instance(VKBot)
+from dependency import handlers, view_api
 
 
-@bot.message_handler([u"Погнали", u"погнали", u"лол", u"Лол"])
+@handlers.message_handler([u"Погнали", u"погнали", u"лол", u"Лол"])
 def start_handler(message):
-    bot.api.messages.send(user_id=message.user_id, message=u"Повеливайте, господин!")
+    view_api.vk.messages.send(user_id=message.user_id, message=u"Повеливайте, господин!")
 
 
-@bot.message_handler([u"Загрузить с вк"])
+@handlers.message_handler([u"Загрузить с вк"])
 def vk_start_download_handler(message):
-    bot.api.messages.send(user_id=message.user_id, message=u"Жду архив (отправьте его, а потом отправьте ОК)")
+    view_api.vk.messages.send(user_id=message.user_id, message=u"Жду архив (отправьте его, а потом отправьте ОК)")
 
 
-@bot.message_handler([u"Ок", u'ОК', u"ок"])
+@handlers.message_handler([u"Ок", u'ОК', u"ок"])
 def vk_ready_download_handler(message):
     dest_directory = '/home/morins/Projects/poindexter/out/%s'
 
-    response = bot.api.messages.getHistoryAttachments(peer_id=message.user_id, media_type=u"doc", count=1)
+    response = view_api.vk.messages.getHistoryAttachments(peer_id=message.user_id, media_type=u"doc", count=1)
 
     title = response['items'][0]['attachment']['doc']['title'].split('.')[0]
     source = response['items'][0]['attachment']['doc']['url']
@@ -54,10 +49,16 @@ def vk_ready_download_handler(message):
         box = file.getbbox()
         pdf.image(image, x=box[0], y=box[1], w=pdf.w, h=pdf.h)
     pdf.output(dest_directory % (title + ".pdf"), "F")
+    #
+    # upload_url = view_api.docs.getMessagesUploadServer(type='doc', peer_id=message.user_id)['upload_url']
+    # resp = requests.post(upload_url, files={'file': open(dest_directory % (title + ".pdf"), "rb")}).json()['file']
+    #
+    # doc = view_api.docs.save(file=resp, title='конспект')[0]
 
-    upload_url = bot.api.docs.getMessagesUploadServer(type='doc', peer_id=message.user_id)['upload_url']
-    resp = requests.post(upload_url, files={'file': open(dest_directory % (title + ".pdf"), "rb")}).json()['file']
+    doc = VkUploader().messages_save(dest_directory % (title + ".pdf"), 'doc', message.user_id, title)
 
-    doc = bot.api.docs.save(file=resp, title='конспект')[0]
+    view_api.vk.messages.send(peer_id=message.user_id, attachment='doc%s_%s' % (doc['owner_id'], doc['id']))
 
-    bot.api.messages.send(peer_id=message.user_id, attachment='doc%s_%s' % (doc['owner_id'], doc['id']))
+
+def get_handlers():
+    return handlers
