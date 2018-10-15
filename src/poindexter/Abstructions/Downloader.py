@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from abc import abstractmethod, abstractproperty, ABCMeta
 from Abstructions.Processor import IProcessor
 
