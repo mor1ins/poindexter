@@ -46,10 +46,10 @@ class NotesDB:
     def __init__(self, db_path, table):
         self.table = table
         self.db_path = db_path
-        self.engine = create_engine(CONNECTING_STRING % self.db_path)
+        self.engine = None
 
-    def __call__(self, *args, **kwargs):
-        return self
+    def open(self):
+        self.engine = create_engine(CONNECTING_STRING % self.db_path)
 
     def create_table(self):
         self.engine.execute(create_table_query % self.table)
@@ -69,6 +69,7 @@ class NotesDB:
 
 if __name__ == "__main__":
     db = NotesDB(DB_NOTES_PATH, TABLE_NAME)
+    db.open()
     db.remove_table()
     db.create_table()
 

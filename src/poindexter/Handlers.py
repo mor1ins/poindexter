@@ -5,9 +5,13 @@ import os
 import random
 from zipfile import ZipFile
 
+import requests
+import vk
 from Generators.PdfGenerator import PdfGenerator
+from Generators.MenuGenerator import MenuGenerator
 from Loaders.VkLoader import VkUploader, VkLoader
-from dependency import handlers, view_api, work_dir, logger
+from dependency import handlers, view_api, access_token, app_id, vk_login, vk_pass, work_dir, logger, global_db, \
+    admin_api
 
 
 @handlers.message_handler([u"Погнали", u"погнали", u"лол", u"Лол"])
@@ -41,7 +45,24 @@ def vk_ready_download_handler(message):
     logger(user_id=message.user_id, log=u"Загружаем на сервер")
     doc = VkUploader().messages_save(local_dir % ("%s.%s" % (title, "pdf")), 'doc', message.user_id, title)
 
-    view_api.vk.messages.send(peer_id=message.user_id, attachment='doc%s_%s' % (doc['owner_id'], doc['id']))
+    # view_api.vk.messages.send(peer_id=message.user_id, attachment='doc%s_%s' % (doc['owner_id'], doc['id']))
+
+    menu = MenuGenerator()
+    menu.process(None, "../../out/menu.html")
+
+    page = open("../../out/menu.html")
+    text = ""
+    for t in page.readlines():
+        text += t
+
+    user = vk.Session(access_token=access_token)
+    user_api = vk.API(user)
+    user_api.pages.save(page_id=55980612, group_id=171785116, title="Меню", text=text, v='5.85')
+
+    url = user_api.docs.getUploadServer(group_id=171785116, v='5.85')['upload_url']
+    resp = requests.post(url, files={'file': open(local_dir % ("%s.%s" % (title, "pdf")), "rb")}).json()
+
+    doc = user_api.docs.save(file=resp['file'], title=title, v='5.85')[0]
 
 
 def get_handlers():

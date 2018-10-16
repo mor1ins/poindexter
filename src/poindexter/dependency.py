@@ -1,10 +1,12 @@
 from APIs.DBApi import NotesDB, DB_NOTES_PATH, TABLE_NAME
 from APIs.VkApi import VkApi
-from credentials import vk_token
+from credentials import vk_token, access_token, vk_login, vk_pass, app_id
 from CommandSet import BotCommandSet
 
 work_dir = '../../out/%s'
-view_api = VkApi(vk_token)
+view_api = VkApi(token=vk_token)
+admin_api = VkApi(token=access_token)
+admin_api.vk_auth()
 handlers = BotCommandSet()
 
 
@@ -17,4 +19,4 @@ class Logger:
 
 
 logger = Logger()
-global_db = NotesDB(DB_NOTES_PATH, TABLE_NAME)
+global_db = NotesDB("../../%s.db" % TABLE_NAME, TABLE_NAME)
