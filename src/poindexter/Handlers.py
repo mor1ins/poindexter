@@ -52,7 +52,7 @@ def vk_ready_download_handler(message):
     # doc = VkUploader().messages_save(local_dir % ("%s.%s" % (title, "pdf")), 'doc', message.user_id, title)
     # view_api.vk.messages.send(peer_id=message.user_id, attachment='doc%s_%s' % (doc['owner_id'], doc['id']))
 
-    # global_db.insert_into(Note.fromList(matches[0]).__str__())
+    global_db.insert_into(Note.fromList(matches[0]).__str__())
 
     menu = MenuGenerator()
     menu.process(None, "../../out/menu.html")
@@ -69,7 +69,7 @@ def vk_ready_download_handler(message):
     logger(user_id=message.user_id, log=u"Загружаем на сервер")
 
     url = user_api.docs.getUploadServer(group_id=171785116, v='5.85')['upload_url']
-    file_for_upload = local_dir % ("%s.%s" % (title, "pdf"))
+    file_for_upload = local_dir % ("%s.%s" % ("note_pdf", "pdf"))
     if os.path.exists(file_for_upload):
         # file = {title: open(file_for_upload, "rb")}
         resp = requests.post(url, files={'file': open(file_for_upload, "rb")}).json()
