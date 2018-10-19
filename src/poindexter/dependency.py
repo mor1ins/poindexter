@@ -20,3 +20,5 @@ class Logger:
 
 logger = Logger()
 global_db = NotesDB("../../%s.db" % TABLE_NAME, TABLE_NAME)
+global_db.remove_table()
+global_db.create_table()

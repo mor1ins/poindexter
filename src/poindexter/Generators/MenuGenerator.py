@@ -38,7 +38,6 @@ class MenuGenerator(IGenerator):
         self.db = dependency.global_db
 
     def generate(self, source, destination):
-        self.db.open()
         notes = self.db.select_all()
         menu = MenuTree()
         for note in notes:

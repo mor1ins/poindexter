@@ -35,21 +35,19 @@ format_dir = r'(\w+)\s+(\d)(\d)\s+(\w+),\s+(\w+\s*\w*),\s+(\w+)\s+(\w+),\s+(\d+)
 # trans_autocommit_query = 'SET autocommit=&d'
 
 class Checker:
-    def __init__(self, template):
-        self.template = template
-
-    def check_title(self, title):
-        return len(re.match(self.template, title).groups()) > 0
+    @staticmethod
+    def check_title(title, template=format_dir):
+        return len(re.match(template, title).groups()) == 1
 
 
 class NotesDB:
     def __init__(self, db_path, table):
         self.table = table
         self.db_path = db_path
-        self.engine = None
-
-    def open(self):
         self.engine = create_engine(CONNECTING_STRING % self.db_path)
+
+    def exist(self):
+        return os.path.exists(self.db_path)
 
     def create_table(self):
         self.engine.execute(create_table_query % self.table)
