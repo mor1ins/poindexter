@@ -8,8 +8,8 @@ class IUploader(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def upload(self, source, destination):
+    def upload(self, source):
         """генерация"""
-
-    def save_doc(self, *arg, **keywords):
-        """сохранение документа на сервере сервиса"""
+    #
+    # def save_doc(self, *arg, **keywords):
+    #     """сохранение документа на сервере сервиса"""

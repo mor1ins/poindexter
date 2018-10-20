@@ -19,4 +19,4 @@ class PdfGenerator(IGenerator):
             file = Image.open(image)
             box = file.getbbox()
             pdf.image(image, x=box[0], y=box[1], w=pdf.w, h=pdf.h)
-        pdf.output(dir % ("%s.%s" % (title, "pdf")), "F")
+        pdf.output(dir % ("%s.%s" % ("note_pdf", "pdf")), "F")
