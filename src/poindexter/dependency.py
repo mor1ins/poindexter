@@ -10,6 +10,7 @@ class Logger:
 
     def __call__(self, user_id, log):
         self.__api.vk.messages.send(user_id=user_id, message=log)
+        print(log)
 
 
 work_dir = '../../out/%s'

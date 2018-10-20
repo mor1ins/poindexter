@@ -6,9 +6,6 @@ import dependency
 import os
 
 
-
-
-
 class MenuTree:
     def __init__(self):
         self.hierarchy = dict()
@@ -35,7 +32,7 @@ class MenuTree:
 
 
 def transform(note):
-    return note[1], note[0], "{}{}. {} {} {}".format(note[3], note[6], note[4], note[2], note[5])
+    return note[1], note[0], "[{}|{}{}. {} {} {}]".format(note[7], note[3], note[6], note[4], note[2], note[5])
 
 
 class MenuGenerator(IGenerator):

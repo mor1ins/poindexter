@@ -58,14 +58,12 @@ def vk_ready_download_handler(message):
     logger(user_id=message.user_id, log=u"Пдф сгенерирована")
 
     matches = re.findall(format_dir, title, re.U)
-    global_db.insert_into(Note.fromList(matches[0]).__str__())
-
-    MenuGenerator().process(None, "../../out/menu.html")
+    global_db.insert_into(Note.from_list(matches[0], rand).__str__())
 
     logger(user_id=message.user_id, log=u"Загружаем на сервер")
 
     file_for_upload = local_dir % ("%s.%s" % ("note_pdf", "pdf"))
-    uploader = VkUploader(page_id=55980612, group_id=171785116, menu_title="Меню", doc_title=title)
+    uploader = VkUploader(page_id=55980612, group_id=171785116, menu_title="Меню", doc_title=title, rand_id=rand)
     is_uploaded = uploader.upload(file_for_upload)
 
     if is_uploaded:

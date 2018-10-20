@@ -10,7 +10,7 @@ import requests
 from urllib import request
 import random
 import os
-
+from Generators.MenuGenerator import MenuGenerator
 
 class VkLoader(IDownloader):
     def __init__(self):
@@ -47,14 +47,17 @@ class VkLoader(IDownloader):
 
 
 class VkUploader(IUploader, ABC):
-    def __init__(self, group_id=None, menu_title=None, doc_title=None, page_id=None):
+    def __init__(self, group_id=None, menu_title=None, doc_title=None, page_id=None, rand_id=None):
         self.__api = dependency.user_api
         self.__group_id = group_id
         self.__menu_title = menu_title
         self.__doc_title = doc_title
         self.__page_id = page_id
+        self.__rand_id = rand_id
+        self.db = dependency.global_db
 
     def page_save(self, **keys):
+        MenuGenerator().process(None, "../../out/menu.html")
         text = ""
         with open("../../out/menu.html") as page:
             for t in page.readlines():
@@ -66,12 +69,13 @@ class VkUploader(IUploader, ABC):
         if os.path.exists(file_for_upload):
             resp = requests.post(url, files={'file': open(file_for_upload, "rb")}).json()
             doc = self.__api.docs.save(file=resp['file'], title=self.__doc_title, v='5.85')[0]
+            self.db.update_url(self.__rand_id, doc['url'])
             return True
         return False
 
     def upload(self, source):
-        self.page_save(page_id=self.__page_id, group_id=self.__group_id, title="Меню")
         is_uploaded = self.doc_save(source)
+        self.page_save(page_id=self.__page_id, group_id=self.__group_id, title="Меню")
         return is_uploaded
     # def messages_save(self, destination, type, user_id, file_name):
     #     upload_url = self.__api.vk.docs.getMessagesUploadServer(type=type, peer_id=user_id)['upload_url']

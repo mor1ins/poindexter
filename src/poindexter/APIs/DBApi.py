@@ -19,13 +19,15 @@ notes_fields = """
     study_year integer,
     lecture_name varchar,
     total_year integer,
-    semester integer
+    semester integer,
+    url varchar
 """
 inserting_fields = """
-    faculty, graduate, course_name, study_year, lecture_name, total_year, semester
+    faculty, graduate, course_name, study_year, lecture_name, total_year, semester, url
 """
 create_table_query = "create table %s (%s)" % ("%s", notes_fields)
 insert_query = 'insert into %s(%s) values (%s)' % ("%s", inserting_fields, "%s")
+update_query = "update %s set url='%s' where url='%s'"
 select_query = 'select %s from %s'
 
 format_dir = r'(\w+)\s+(\d)(\d)\s+(\w+),\s+(\w+\s*\w*),\s+(\w+)\s+(\w+),\s+(\d+)'
@@ -60,6 +62,10 @@ class NotesDB:
         query = insert_query % (self.table, values)
         self.engine.execute(query)
 
+    def update_url(self, rand_id, url):
+        query = update_query % (self.table, url, rand_id)
+        self.engine.execute(query)
+
     def select_all(self):
         result = self.engine.execute(select_query % (inserting_fields, self.table))
         return result.fetchall()
@@ -75,7 +81,7 @@ if __name__ == "__main__":
     for dir in dirs:
         matches = re.findall(format_dir, dir, re.U)
         if len(matches) > 0:
-            db.insert_into(Note.fromList(matches[0]).__str__())
+            db.insert_into(Note.from_list(matches[0]).__str__())
 
     for note in db.select_all():
         print(note)
