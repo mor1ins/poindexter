@@ -6,6 +6,9 @@ import dependency
 import os
 
 
+
+
+
 class MenuTree:
     def __init__(self):
         self.hierarchy = dict()
@@ -19,13 +22,15 @@ class MenuTree:
         else:
             self.hierarchy[elem[0]].add(elem[1:])
 
-    def tree2str(self, level=0):
-        offset = "*" * level
+    def tree2str(self):
         tree = ""
         for key in self.hierarchy.keys():
-            tree += offset + "{}".format(key) + "\n"
-            if len(self.hierarchy[key].hierarchy) > 0:
-                tree += self.hierarchy[key].tree2str(level + 1)
+            if len(self.hierarchy[key].hierarchy) == 0:
+                tree += key
+            else:
+                tree += "{{Hider|%s\n" % key
+                tree += self.hierarchy[key].tree2str()
+                tree += "\n}}\n"
         return tree
 
 
@@ -47,3 +52,4 @@ class MenuGenerator(IGenerator):
             os.remove(destination)
         file = open(destination, "w+")
         file.write(menu.tree2str())
+        file.close()
