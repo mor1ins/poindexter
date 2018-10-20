@@ -9,7 +9,7 @@ import Handlers
 class VKBot(object):
     def __init__(self):
         self.__commands = Handlers.get_handlers()
-        self.__api = dependency.view_api
+        self.__api = dependency.group_api
 
     @property
     def api(self):
