@@ -23,7 +23,7 @@ class MenuTree:
         tree = ""
         for key in self.hierarchy.keys():
             if len(self.hierarchy[key].hierarchy) == 0:
-                tree += key
+                tree += key + "<br/>"
             else:
                 tree += "{{Hider|%s\n" % key
                 tree += self.hierarchy[key].tree2str()

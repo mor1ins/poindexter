@@ -6,6 +6,18 @@ import vk
 from log import *
 
 
+class DownloadQueue:
+    def __init__(self):
+        self.count_docs = 0
+        self.queue = []
+
+    def append(self, elem):
+        self.queue.append(elem)
+
+    def inc(self, count):
+        self.count_docs += count
+
+
 work_dir = '../../out/%s'
 group_api = VkApi(token=vk_token)
 
@@ -15,9 +27,9 @@ group_id = 171785116
 user = vk.Session(access_token=access_token)
 user_api = vk.API(user)
 
-handlers = BotCommandSet()
+download_queue = DownloadQueue()
 
-download_queue = []
+handlers = BotCommandSet()
 
 logger = Logger(group_api)
 

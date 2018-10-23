@@ -32,12 +32,10 @@ class VkLoader(IDownloader):
              after="VkLoader: downloaded and unziped",
              pred=is_correct_ext,
              error_message="VkLoader: incorrect ext of archive")
-    def download(self, source, destination):
-        response = self.__api.vk.messages.getHistoryAttachments(peer_id=source, media_type=u"doc", count=1)
-
-        title = response['items'][0]['attachment']['doc']['title'].split('.')[0]
-        ext = response['items'][0]['attachment']['doc']['ext']
-        url = response['items'][0]['attachment']['doc']['url']
+    def download(self, doc, destination):
+        title = doc[0]
+        ext = doc[1]
+        url = doc[2]
 
         if ext != "zip":
             return title, ext
@@ -45,15 +43,8 @@ class VkLoader(IDownloader):
         download_destination = destination % ("%s.%s" % (title, ext))
         request.urlretrieve(url, download_destination)
 
-        only_archive = [item for item
-                        in os.listdir(destination[:-3])
-                        if item.split('.')[1] == "zip"][0]
-
-        title = only_archive.split('.')[0]
-        ext = only_archive.split('.')[1]
-
-        archive_file = ZipFile(destination % only_archive)
-        archive_file.extractall(destination % title)
+        archive_file = ZipFile(download_destination)
+        archive_file.extractall(download_destination[:-4])
         archive_file.close()
 
         return title, ext
