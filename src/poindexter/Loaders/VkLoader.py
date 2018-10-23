@@ -9,14 +9,29 @@ import dependency
 import requests
 from urllib import request
 import random
+from dependency import logable
 import os
 from Generators.MenuGenerator import MenuGenerator
 
+
+def is_correct_ext(file):
+    return file[1] == "zip"
+
+
+def is_success(proc):
+    return proc
+
+
 class VkLoader(IDownloader):
-    def __init__(self):
+    def __init__(self, message):
+        self.__message = message
         self.__api = dependency.group_api
         self.__log = dependency.logger
 
+    @logable(before="VkLoader: downloading...",
+             after="VkLoader: downloaded and unziped",
+             pred=is_correct_ext,
+             error_message="VkLoader: incorrect ext of archive")
     def download(self, source, destination):
         response = self.__api.vk.messages.getHistoryAttachments(peer_id=source, media_type=u"doc", count=1)
 
@@ -25,12 +40,10 @@ class VkLoader(IDownloader):
         url = response['items'][0]['attachment']['doc']['url']
 
         if ext != "zip":
-            self.__log(user_id=source, log=u"Неправильный формат файла")
-            return
+            return title, ext
 
         download_destination = destination % ("%s.%s" % (title, ext))
         request.urlretrieve(url, download_destination)
-        self.__log(user_id=source, log=u"Файл скачали")
 
         only_archive = [item for item
                         in os.listdir(destination[:-3])
@@ -47,6 +60,7 @@ class VkLoader(IDownloader):
 
 
 class VkUploader(IUploader, ABC):
+    @logable(before="VkUploader: initializing...", after="VkUploader: initialized")
     def __init__(self, group_id=None, menu_title=None, doc_title=None, page_id=None, rand_id=None):
         self.__api = dependency.user_api
         self.__group_id = group_id
@@ -73,6 +87,8 @@ class VkUploader(IUploader, ABC):
             return True
         return False
 
+    @logable(before="VkUploader: uploading...", after="VkUploader: uploaded",
+             pred=is_success, error_message="can't upload!")
     def upload(self, source):
         is_uploaded = self.doc_save(source)
         self.page_save(page_id=self.__page_id, group_id=self.__group_id, title="Меню")

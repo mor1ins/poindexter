@@ -1,15 +1,14 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import shutil
 import os
 import random
 from Generators.PdfGenerator import PdfGenerator
-from Generators.MenuGenerator import MenuGenerator
 from Loaders.VkLoader import VkUploader, VkLoader
 import re
 from Note import Note
-from APIs.DBApi import format_dir
-from dependency import handlers, group_api, work_dir, logger, global_db
+from dependency import handlers, group_api, work_dir, logger, global_db, page_id, group_id, download_queue
 
 
 def gen_random_dir():
@@ -38,38 +37,33 @@ def start_handler(message):
 @handlers.message_handler([u"Загрузить с вк"])
 def vk_start_download_handler(message):
     group_api.vk.messages.send(user_id=message.user_id, message=u"Жду архив (отправьте его, а потом отправьте ОК)")
+    download_queue.clear()
 
 
 @handlers.message_handler([u"Ок", u'ОК', u"ок"])
 def vk_ready_download_handler(message):
-    group_api.vk.messages.send(user_id=message.user_id, message=u"Погнали!")
-    rand, local_dir = gen_random_dir()
-    title, ext = VkLoader().process(message.user_id, local_dir)
+    rand, local_dir = None, None
 
-    if is_correct_name("zip", ext):
-        logger(user_id=message.user_id, log=u"Некорректный формат архиива")
-        return
-    logger(user_id=message.user_id, log=u"Разархивировали")
-    if is_correct_name(format_dir, title):
-        logger(user_id=message.user_id, log=u"Некорректное имя архива")
-        return
+    try:
+        rand, local_dir = gen_random_dir()
 
-    PdfGenerator().process(local_dir, title)
-    logger(user_id=message.user_id, log=u"Пдф сгенерирована")
+        group_api.vk.messages.send(user_id=message.user_id, message=u"Погнали!")
+        title, ext = VkLoader(message).process(message.user_id, local_dir)
 
-    matches = re.findall(format_dir, title, re.U)
-    global_db.insert_into(Note.from_list(matches[0], rand).__str__())
+        PdfGenerator().process(local_dir, title)
 
-    logger(user_id=message.user_id, log=u"Загружаем на сервер")
+        global_db.insert_into(Note.from_list(title, rand).__str__())
 
-    file_for_upload = local_dir % ("%s.%s" % ("note_pdf", "pdf"))
-    uploader = VkUploader(page_id=55980612, group_id=171785116, menu_title="Меню", doc_title=title, rand_id=rand)
-    is_uploaded = uploader.upload(file_for_upload)
+        file_for_upload = local_dir % ("%s.%s" % ("note_pdf", "pdf"))
+        uploader = VkUploader(page_id=page_id, group_id=group_id, menu_title="Меню", doc_title=title, rand_id=rand)
 
-    if is_uploaded:
-        logger(user_id=message.user_id, log=u"Конспект успешно добавлен")
-    else:
+        if uploader.upload(file_for_upload):
+            logger(user_id=message.user_id, log=u"Конспект успешно добавлен")
+    except:
         logger(user_id=message.user_id, log=u"Что-то пошло не так")
+    finally:
+        if os.path.exists(local_dir[:-3]):
+            shutil.rmtree(local_dir[:-3])
 
 
 def get_handlers():
