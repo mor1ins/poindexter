@@ -17,6 +17,10 @@ class DownloadQueue:
     def inc(self, count):
         self.count_docs += count
 
+    def clear(self):
+        self.queue.clear()
+        self.count_docs = 0
+
 
 work_dir = '../../out/%s'
 group_api = VkApi(token=vk_token)

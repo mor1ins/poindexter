@@ -28,13 +28,17 @@ class Note:
 
     @staticmethod
     def from_list(title: str, rand):
-        note = re.findall(format_dir, title, re.U)[0]
-        print("begin")
-        if not (len(note) == 8 and isinstance(note[0], str) and isinstance(note[1], str)
-                and isinstance(note[2], str) and isinstance(note[3], str)
-                and isinstance(note[4], str) and isinstance(note[5], str)
-                and isinstance(note[6], str) and isinstance(note[7], str)):
-            return None
+        match = re.findall(format_dir, title, re.U)
 
-        return Note(note[0], note[3], note[4], note[1], "%s %s" % (note[5], note[6]),
-                    note[7], note[2], rand)
+        if len(match) == 0:
+            raise Exception("Имя не удовлетворяет соглашению\n")
+        else:
+            note = match[0]
+            if not (isinstance(note[0], str) and isinstance(note[1], str)
+                    and isinstance(note[2], str) and isinstance(note[3], str)
+                    and isinstance(note[4], str) and isinstance(note[5], str)
+                    and isinstance(note[6], str) and isinstance(note[7], str)):
+                return None
+
+            return Note(note[0], note[3], note[4], note[1], "%s %s" % (note[5], note[6]),
+                        note[7], note[2], rand)
