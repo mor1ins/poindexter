@@ -10,6 +10,7 @@ import re
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from Note import Note
 from dependency import handlers, group_api, user_api, work_dir, logger, global_db, page_id, group_id, download_queue
+from strings import *
 
 
 def gen_random_dir():
@@ -30,24 +31,24 @@ def is_correct_name(regexp, name):
     return len(matches) < 0
 
 
-@handlers.message_handler([u"Загрузить по ссылке"])
+@handlers.message_handler([BTN_PS_DL])
 def webdav_start_download_handler(message):
-    group_api.vk.messages.send(user_id=message.user_id, message=logger.START_PS_DL)
+    group_api.vk.messages.send(user_id=message.user_id, message=LOG_START_PS_DL)
 
 
-@handlers.message_handler([u"Завершить сеанс"])
+@handlers.message_handler([BTN_END_SESSION])
 def end_session(message):
     keyboard = VkKeyboard()
-    keyboard.add_button("Начать", color=VkKeyboardColor.PRIMARY)
-    group_api.vk.messages.send(user_id=message.user_id, message="Удачи!",
+    keyboard.add_button(BTN_START_SESSION, color=VkKeyboardColor.PRIMARY)
+    group_api.vk.messages.send(user_id=message.user_id, message=LOG_END_SESSION,
                                keyboard=keyboard.get_keyboard())
 
 
-@handlers.message_handler([u"Начать"])
+@handlers.message_handler([BTN_START_SESSION])
 def start_handler(message):
     keyboard = VkKeyboard()
 
-    group_api.vk.messages.send(user_id=message.user_id, message=logger.BEGIN_MESSAGE,
+    group_api.vk.messages.send(user_id=message.user_id, message=LOG_BEGIN_MESSAGE,
                                keyboard=keyboard.get_empty_keyboard())
 
     response = user_api.groups.getMembers(
@@ -58,28 +59,28 @@ def start_handler(message):
 
     if message.user_id in admins:
         download_queue.clear()
-        keyboard.add_button("Загрузить с вк", color=VkKeyboardColor.PRIMARY)
-        keyboard.add_button("Загрузить по ссылке", color=VkKeyboardColor.PRIMARY)
+        keyboard.add_button(BTN_VK_DL, color=VkKeyboardColor.PRIMARY)
+        keyboard.add_button(BTN_PS_DL, color=VkKeyboardColor.PRIMARY)
         keyboard.add_line()
-        keyboard.add_button("Проверка", color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button("Готово", color=VkKeyboardColor.NEGATIVE)
+        keyboard.add_button(BTN_ADD, color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button(BTN_READY, color=VkKeyboardColor.NEGATIVE)
         keyboard.add_line()
-        keyboard.add_button("Завершить сеанс", color=VkKeyboardColor.DEFAULT)
-        group_api.vk.messages.send(user_id=message.user_id, message=u"У вас достаточные права.",
+        keyboard.add_button(BTN_END_SESSION, color=VkKeyboardColor.DEFAULT)
+        group_api.vk.messages.send(user_id=message.user_id, message=LOG_LVL_ADMIN,
                                    keyboard=keyboard.get_keyboard())
     else:
-        group_api.vk.messages.send(user_id=message.user_id, message=logger.NO_ADMIN_MESSAGE)
+        group_api.vk.messages.send(user_id=message.user_id, message=LOG_NO_ADMIN_MESSAGE)
 
 
-@handlers.message_handler([u"Загрузить с вк"])
+@handlers.message_handler([BTN_VK_DL])
 def vk_start_download_handler(message):
-    group_api.vk.messages.send(user_id=message.user_id, message=logger.START_VK_DL)
+    group_api.vk.messages.send(user_id=message.user_id, message=LOG_START_VK_DL)
     download_queue.clear()
 
 
-@handlers.message_handler([u"Проверка"])
+@handlers.message_handler([BTN_ADD])
 def vk_ready(message):
-    text = logger.DOC_IN_QUEUE % download_queue.count_docs
+    text = LOG_DOC_IN_QUEUE % download_queue.count_docs
     if download_queue.count_docs > 0:
         response = group_api.vk.messages.getHistoryAttachments(
             peer_id=message.user_id, media_type=u"doc",
@@ -100,7 +101,7 @@ def vk_ready(message):
     )
 
 
-@handlers.message_handler([u"Готово"])
+@handlers.message_handler([BTN_READY])
 def vk_ready_download_handler(message):
     rand, local_dir = None, None
     log_for_user = ""
@@ -108,7 +109,7 @@ def vk_ready_download_handler(message):
     if len(download_queue.queue) > 0:
         group_api.vk.messages.send(
             user_id=message.user_id,
-            message=logger.START_DL_NOTES
+            message=LOG_START_DL_NOTES
         )
         for i in range(0, download_queue.count_docs):
             try:
@@ -131,21 +132,21 @@ def vk_ready_download_handler(message):
                 )
 
                 if uploader.upload(file_for_upload):
-                    log_for_user += logger.SUCCESS_ADD_NOTE + '\n'
+                    log_for_user += LOG_SUCCESS_ADD_NOTE + '\n\n'
             except Exception as err:
-                log_for_user += logger.ERROR_ADD_NOTE + err.args[0] + '\n'
+                log_for_user += LOG_ERROR_ADD_NOTE + "\n" + err.args[0] + '\n\n'
             finally:
                 if os.path.exists(local_dir[:-3]):
                     shutil.rmtree(local_dir[:-3])
 
-        log_for_user += logger.END_DL_NOTES
+        log_for_user += LOG_END_DL_NOTES
         download_queue.clear()
         keyboard = VkKeyboard()
-        keyboard.add_button("Начать", color=VkKeyboardColor.PRIMARY)
+        keyboard.add_button(BTN_START_SESSION, color=VkKeyboardColor.PRIMARY)
         group_api.vk.messages.send(user_id=message.user_id, message=log_for_user,
                                    keyboard=keyboard.get_keyboard())
     else:
-        group_api.vk.messages.send(user_id=message.user_id, message=logger.NOTHING_FOR_DL)
+        group_api.vk.messages.send(user_id=message.user_id, message=LOG_NOTHING_FOR_DL)
 
 
 def get_handlers():

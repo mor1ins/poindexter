@@ -17,7 +17,7 @@ class PdfGenerator(IGenerator):
     @logable(before="PdfGenerator: generating pdf...",
              after="PdfGenerator: generated",
              pred=is_done_for_gen,
-             error_message="PdfGenerator: path is not ready for generate")
+             error_message="В директории не найдено фото")
     def generate(self, dir, title):
         photos = [dir % ("%s/%s" % (title, photo))
                   for photo in os.listdir(dir % title)

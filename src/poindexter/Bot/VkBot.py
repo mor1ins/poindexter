@@ -21,10 +21,13 @@ class VKBot(object):
     def run(self):
         for event in self.__api.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                print("start execute", event.text)
+                try:
+                    print("start execute", event.text)
 
-                if len(event.attachments) > 0:
-                    dependency.download_queue.inc(int(len(event.attachments) / 2))
-                self.__commands.exec_handler(event)
+                    if len(event.attachments) > 0:
+                        dependency.download_queue.inc(int(len(event.attachments) / 2))
+                    self.__commands.exec_handler(event)
 
-                print("stop execute", event.text)
+                    print("stop execute", event.text)
+                except Exception as err:
+                    print("rerun")

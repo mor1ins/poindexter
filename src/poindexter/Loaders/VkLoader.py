@@ -31,7 +31,7 @@ class VkLoader(IDownloader):
     @logable(before="VkLoader: downloading...",
              after="VkLoader: downloaded and unziped",
              pred=is_correct_ext,
-             error_message="VkLoader: incorrect ext of archive")
+             error_message="Документ не является zip-архивом")
     def download(self, doc, destination):
         title = doc[0]
         ext = doc[1]
@@ -79,7 +79,7 @@ class VkUploader(IUploader, ABC):
         return False
 
     @logable(before="VkUploader: uploading...", after="VkUploader: uploaded",
-             pred=is_success, error_message="can't upload!")
+             pred=is_success, error_message="Загрузка не удалась")
     def upload(self, source):
         is_uploaded = self.doc_save(source)
         self.page_save(page_id=self.__page_id, group_id=self.__group_id, title="Меню")
