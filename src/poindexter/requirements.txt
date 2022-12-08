@@ -4,7 +4,7 @@ PIL
 fpdf
 pyPdf
 asn1crypto==0.24.0
-certifi==2018.8.24
+certifi==2022.12.7
 cffi==1.11.5
 chardet==3.0.4
 configparser==3.5.0
